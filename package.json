@@ -2,24 +2,39 @@
   "name": "iztro",
   "version": "2.5.8",
   "description": "轻量级紫微斗数星盘生成库。可以通过出生年月日获取到紫微斗数星盘信息、生肖、星座等信息。This is a lightweight kit for generating astrolabes for Zi Wei Dou Shu (The Purple Star Astrology), an ancient Chinese astrology. It allows you to obtain your horoscope and personality analysis.",
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
-  "unpkg": "dist/iztro.min.js",
-  "jsdelivr": "dist/iztro.min.js",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "unpkg": "./dist/umd/iztro.min.global.js",
+  "jsdelivr": "./dist/umd/iztro.min.global.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./server": {
+      "types": "./dist/server/index.d.cts",
+      "require": "./dist/server/index.cjs"
+    }
+  },
+  "bin": {
+    "iztro-grpc": "./dist/server/index.cjs"
+  },
   "scripts": {
-    "build": "tsc",
-    "build:umd": "webpack",
+    "build": "tsup",
+    "dev:server": "tsx watch src/server/index.ts",
+    "start": "node dist/server/index.cjs",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest",
+    "lint": "eslint .",
     "format": "prettier --write \"src/**/*.ts\"",
-    "lint": "eslint . --ext .ts",
-    "test": "jest --config jestconfig.json --coverage",
-    "prepare": "yarn build",
-    "prepublishOnly": "npm test && yarn lint && yarn build:umd",
-    "preversion": "yarn lint",
-    "version": "yarn format && git add -A src",
-    "postversion": "git push && git push --tags"
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "pnpm test && pnpm lint && pnpm build"
   },
   "files": [
-    "lib/**/*",
     "dist/**/*"
   ],
   "publishConfig": {
@@ -37,7 +52,8 @@
     "horoscope",
     "ephemeris",
     "zodiac",
-    "sign"
+    "sign",
+    "grpc"
   ],
   "author": "SylarLong",
   "license": "MIT",
@@ -46,27 +62,27 @@
     "email": "sylarlong@gmail.com"
   },
   "homepage": "https://iztro.com",
+  "packageManager": "pnpm@9.0.0",
+  "engines": {
+    "node": ">=18"
+  },
   "devDependencies": {
-    "@babel/core": "^7.23.2",
-    "@babel/preset-env": "^7.23.2",
-    "@babel/preset-typescript": "^7.23.2",
-    "@types/jest": "^29.5.3",
-    "@typescript-eslint/eslint-plugin": "^6.4.1",
-    "babel-loader": "^9.1.3",
-    "eslint": "^8.47.0",
-    "eslint-config-standard-with-typescript": "^38.0.0",
-    "eslint-plugin-import": "^2.28.1",
-    "eslint-plugin-n": "^16.0.2",
-    "eslint-plugin-promise": "^6.1.1",
-    "jest": "^29.6.2",
-    "prettier": "^3.0.0",
-    "terser-webpack-plugin": "^5.3.9",
-    "ts-jest": "^29.1.1",
-    "typescript": "^5.2.2",
-    "webpack": "^5.94.0",
-    "webpack-cli": "^5.1.4"
+    "@eslint/js": "^9.10.0",
+    "@types/node": "^20.11.0",
+    "@vitest/coverage-v8": "^2.1.0",
+    "eslint": "^9.10.0",
+    "globals": "^15.9.0",
+    "prettier": "^3.3.3",
+    "tsup": "^8.3.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.4",
+    "typescript-eslint": "^8.5.0",
+    "vitest": "^2.1.0"
   },
   "dependencies": {
+    "@bufbuild/protobuf": "^2.12.0",
+    "@grpc/grpc-js": "^1.11.1",
+    "@weigh-ai/proto": "file:../../G-project/weigh-ai-proto",
     "dayjs": "^1.11.10",
     "i18next": "^23.5.1",
     "lunar-lite": "^0.2.8",
